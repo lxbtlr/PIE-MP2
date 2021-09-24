@@ -10,9 +10,10 @@ import matplotlib.pyplot as plt
 # PanRng = input("Pan Range of the Scanner\n\t")
 # TltRng = input("Tilt range of the Scanner\n\t")
 
-ser = serial.Serial("/dev/ttyUSB0",9600) #change the port to 'COM6' if windows
+ser = serial.Serial("COM14",9600) #change the port to 'COM6' if windows
 
 endkey = re.compile(r'DONE')
+endline = re.compile(r'L')
 
 def sendData(d):
     # sending whatever data we want to the arduino
@@ -24,26 +25,39 @@ def receive_data():
     # receiving data over serial from the arduino,
     # meant to be placed after submitting a command to the arduino 
     # (maybe after every y-axis scan?)
+    line = ""
+    while True:
+        bytesToRead = ser.inWaiting()
+        inny = ser.readline(bytesToRead).decode('utf-8')
+        
+        
+        line += inny
+        if endkey.search(line):
+            return "0,0,0", False
+        if endline.search(line) and len(line)>=5:
+            line = line[:len(line)-1]
+            print(line)
 
-    bytesToRead = ser.inWaiting()
-    if endkey.search(ser.read(bytesToRead)):
-        return "0 0 0", False
-    return ser.read(bytesToRead), True
+            return line, True
+        if len(line) > 13:
+            print(line)
+            line = ""
 
 def write_data(d):
     # used to record data to csv for other programs
-
     c = open('savefile.csv','w')
-    c.write(d+'\n') # putting text into the csv
+    for i in d:
+        c.write(str(i)) # putting text into the csv
+    c.write("\n")
     c.close()
 
 def trigfunc(d):
     x = []
     y = []
     z = []
-    for i in len(d):
+    for i in range(len(d)):
         x.append(d[i][2]*math.sin(d[i][0])*math.cos(d[i][1]))
-        y.append(d[i][2]*math.sin(d[i][0])*math.sin(d[i][1])))
+        y.append(d[i][2]*math.sin(d[i][0])*math.sin(d[i][1]))
         z.append(d[i][2]*math.cos(d[i][0]))
     return x,y,z
 
@@ -57,11 +71,14 @@ print("Scanning...")
 allData = []
 ex = True
 while ex:
+
     values, ex = receive_data()
     if ex == False:
         continue
-    allData.append(values.split(" "))
+    allData.append(values.split(","))
 print("Scan Complete")
+ser.close()
+print(allData)
 print("Saving all data...")
 write_data(allData)
 trigfunc(allData)
