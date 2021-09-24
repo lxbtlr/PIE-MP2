@@ -7,7 +7,6 @@ import math
 import matplotlib.pyplot as plt
 
 # Send commands to the arduino over serial, records the data, then maps the scan
-
 # PanRng = input("Pan Range of the Scanner\n\t")
 # TltRng = input("Tilt range of the Scanner\n\t")
 
@@ -48,8 +47,13 @@ def trigfunc(d):
         z.append(d[i][2]*math.cos(d[i][0]))
     return x,y,z
 
+
+
+print("Sending ranges")
+
 # sendData(PanRng)
 # sendData(TltRng)
+print("Scanning...")
 allData = []
 ex = True
 while ex:
@@ -58,8 +62,10 @@ while ex:
         continue
     allData.append(values.split(" "))
 print("Scan Complete")
-
+print("Saving all data...")
+write_data(allData)
 trigfunc(allData)
+print("Plotting...")
 ax = plt.axes(projection='3d')
 ax.scatter3D(x,y,z,cmap='Greens')
 plt.show()
