@@ -1,14 +1,16 @@
 #include <Servo.h>
 int samples[] = {0,0,0};
-int analogPin = 12;
+int analogPin = A1;
 int value = 0;
 int pan_min = 0;
-int pan_max = 90;
+int pan_max = 40;
 int tilt_min = 0;
-int tilt_max = 90;
+int tilt_max = 40;
+int pan;
+int tilt;
 
-int panPin = ;
-int tiltPin = ;
+int panPin = 9;
+int tiltPin = 10;
 Servo pan_servo;
 Servo tilt_servo;
 
@@ -17,6 +19,7 @@ void setup() {
   Serial.begin(9600);
   pan_servo.attach(panPin);
   tilt_servo.attach(tiltPin);
+  
 }
 
 void loop() {
@@ -24,17 +27,18 @@ void loop() {
   tilt_servo.write(tilt_min);
   for (pan = pan_min; pan <= pan_max; pan +=2) {
     pan_servo.write(pan);
-    delay(10);
-    for (tilt = tilt_min; tilt <= tilt_max; tilt ++) {
+    delay(100);
+    for (tilt = tilt_min; tilt <= tilt_max; tilt +=2) {
       tilt_servo.write(tilt);
-      delay(10);
+      delay(100);
       scan(pan, tilt);
     }
-    pan_servo.write(pan + 1);
-    delay(10);
-    for (tilt = tilt_max; tilt >= tilt_min; tilt -= 1) {
+    pan+= 2;
+    pan_servo.write(pan);
+    delay(100);
+    for (tilt = tilt_max; tilt >= tilt_min; tilt -= 2) {
       tilt_servo.write(tilt);
-      delay(10);
+      delay(100);
       scan(pan, tilt);
     }
   }
