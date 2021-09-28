@@ -1,3 +1,4 @@
+from mpl_toolkits import mplot3d
 import os
 import serial
 import numpy as np
@@ -5,7 +6,9 @@ import time
 import re
 import math
 import matplotlib.pyplot as plt
-
+import pandas as pd
+import seaborn as sns 
+sns.set_theme()
 # Send commands to the arduino over serial, records the data, then maps the scan
 # PanRng = input("Pan Range of the Scanner\n\t")
 # TltRng = input("Tilt range of the Scanner\n\t")
@@ -47,7 +50,7 @@ def write_data(d):
     # used to record data to csv for other programs
     c = open('savefile.csv','w')
     for i in d:
-        c.write(str(i)) # putting text into the csv
+        c.write(str(i)+',') # putting text into the csv
     c.write("\n")
     c.close()
 
@@ -55,10 +58,16 @@ def trigfunc(d):
     x = []
     y = []
     z = []
+        # .00003196*((int(d[i][2])**2)-0.3472*((int(d[i][2]))+115.4
+
     for i in range(len(d)):
-        x.append(d[i][2]*math.sin(d[i][0])*math.cos(d[i][1]))
-        y.append(d[i][2]*math.sin(d[i][0])*math.sin(d[i][1]))
-        z.append(d[i][2]*math.cos(d[i][0]))
+        if int(d[i][2]) <= 200:
+            r = 0
+        else:
+            r = .00003196*(int(d[i][2])**2)-0.3472*(int(d[i][2]))+115.4
+        x.append(r*math.sin(math.radians(110-int(d[i][1])))*math.cos(math.radians(int(d[i][0]))))
+        y.append(r*math.sin(math.radians(110-int(d[i][1])))*math.sin(math.radians(int(d[i][0]))))
+        z.append(r*math.cos(math.radians(110-int(d[i][1]))))
     return x,y,z
 
 
@@ -81,8 +90,23 @@ ser.close()
 print(allData)
 print("Saving all data...")
 write_data(allData)
-trigfunc(allData)
+x,y,z = trigfunc(allData)
 print("Plotting...")
+
+
+# df = pd.DataFrame({"X": x,"Y":y,"Z":z})
+# df = df.pivot(index="X", columns = "Y", values = "Z")
+# ax = sns.heatmap(df)
+# plt.show()
+
+
+
+fig = plt.figure()
 ax = plt.axes(projection='3d')
-ax.scatter3D(x,y,z,cmap='Greens')
+
+ax.scatter3D(x, y, z, c=z, cmap='rainbow')
+ax.set_ylabel("Y")
+ax.set_xlabel("X")
+ax.set_zlabel("Z")
+
 plt.show()

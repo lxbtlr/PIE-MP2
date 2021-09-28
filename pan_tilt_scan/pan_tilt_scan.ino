@@ -8,7 +8,7 @@ int tilt_min = 0;
 int tilt_max = 40;
 int pan;
 int tilt;
-int tbs = 20;
+int tbs = 50;
 
 int panPin = 9;
 int tiltPin = 10;
@@ -55,12 +55,10 @@ void scan(int p, int t) {
   // put your main code here, to run repeatedly:
   samples[0] = analogRead(analogPin);
   value = samples[0];
-//  samples[1] = analogRead(analogPin);
-//  samples[2] = analogRead(analogPin);
-//  samples[3] = analogRead(analogPin);
-//  value = min(samples[0],samples[1]);
-//  value = min(value, samples[2]);
-//  value = min(value, samples[3]);
+  samples[1] = analogRead(analogPin);
+  samples[2] = analogRead(analogPin);
+  value = min(samples[0],samples[1]);
+  value = min(value, samples[2]);
   Serial.print(p);
   Serial.print(",");
   Serial.print(t);
