@@ -58,16 +58,16 @@ def trigfunc(d):
     x = []
     y = []
     z = []
+    r = 0.0
         # .00003196*((int(d[i][2])**2)-0.3472*((int(d[i][2]))+115.4
 
     for i in range(len(d)):
-        if int(d[i][2]) <= 200:
-            r = 0
-        else:
-            r = .00003196*(int(d[i][2])**2)-0.3472*(int(d[i][2]))+115.4
-        x.append(r*math.sin(math.radians(110-int(d[i][1])))*math.cos(math.radians(int(d[i][0]))))
-        y.append(r*math.sin(math.radians(110-int(d[i][1])))*math.sin(math.radians(int(d[i][0]))))
-        z.append(r*math.cos(math.radians(110-int(d[i][1]))))
+        
+        r = .0003196*(float(d[i][2])**2)-0.3472*(float(d[i][2]))+115.4
+        x.append(r*math.sin(math.radians(110-float(d[i][1])))*math.cos(math.radians(float(d[i][0]))))
+        y.append(r*math.sin(math.radians(110-float(d[i][1])))*math.sin(math.radians(float(d[i][0]))))
+        z.append(r*math.cos(math.radians(110-float(d[i][1])))+9)
+        print(r)
     return x,y,z
 
 
@@ -92,19 +92,20 @@ print("Saving all data...")
 write_data(allData)
 x,y,z = trigfunc(allData)
 print("Plotting...")
-
-
+# write_data("\n")
+# write_data((x,y,z))
 # df = pd.DataFrame({"X": x,"Y":y,"Z":z})
 # df = df.pivot(index="X", columns = "Y", values = "Z")
 # ax = sns.heatmap(df)
 # plt.show()
-
-
+magnitude = []
+for i in range(len(x)):
+    magnitude.append((x[i]**2*y[i]**2*z[i]**2)**(1/2))
 
 fig = plt.figure()
 ax = plt.axes(projection='3d')
 
-ax.scatter3D(x, y, z, c=z, cmap='rainbow')
+ax.scatter3D(x, y, z, c=magnitude, cmap='rainbow')
 ax.set_ylabel("Y")
 ax.set_xlabel("X")
 ax.set_zlabel("Z")

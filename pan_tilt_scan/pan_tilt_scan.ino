@@ -4,11 +4,11 @@ int analogPin = A1;
 int value = 0;
 int pan_min = 0;
 int pan_max = 40;
-int tilt_min = 0;
+int tilt_min = 11;
 int tilt_max = 40;
 int pan;
 int tilt;
-int tbs = 50;
+int tbs = 25;
 
 int panPin = 9;
 int tiltPin = 10;
@@ -28,18 +28,18 @@ void setup() {
 void loop() {
   pan_servo.write(pan_min);
   tilt_servo.write(tilt_min);
-  for (pan = pan_min; pan <= pan_max; pan +=2) {
+  for (pan = pan_min; pan <= pan_max; pan +=1) {
     pan_servo.write(pan);
     delay(tbs);
-    for (tilt = tilt_min; tilt <= tilt_max; tilt +=2) {
+    for (tilt = tilt_min; tilt <= tilt_max; tilt +=1) {
       tilt_servo.write(tilt);
       delay(tbs);
       scan(pan, tilt);
     }
-    pan+= 2;
+    pan+= 1;
     pan_servo.write(pan);
     delay(tbs);
-    for (tilt = tilt_max; tilt >= tilt_min; tilt -= 2) {
+    for (tilt = tilt_max; tilt >= tilt_min; tilt -= 1) {
       tilt_servo.write(tilt);
       delay(tbs);
       scan(pan, tilt);
