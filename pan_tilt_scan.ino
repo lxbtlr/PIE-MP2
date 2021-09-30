@@ -6,18 +6,17 @@ int analogPin = A1;
 int value = 0;
 int pan_min = 0;
 int pan_max = 40;
-int tilt_min = 13;
-int tilt_max = 43;
-int pan;
+int tilt_min = 20;
+int tilt_max = 20;
+int pan;  
 int tilt;
-int tbs = 40;
+int tbs = 250;
 
 int panPin = 9;
 int tiltPin = 10;
 Servo pan_servo;
 Servo tilt_servo;
 double temp[20] = {};
-double medians[10] = {};
 float avg = 0;
 void setup() {
   // put your setup code here, to run once:
@@ -64,6 +63,7 @@ void scan(int p, int t) {
   // put your main code here, to run repeatedly:
   for(int i = 0; i <20; i++){
     temp[i] = analogRead(analogPin);
+    delay(20);
     }
   qsort(temp, 20, sizeof(int), compfunc);
   for(int i = 0; i < 10; i++) {
@@ -76,4 +76,5 @@ void scan(int p, int t) {
   Serial.print(",");
   Serial.print(avg);
   Serial.print("L");
+  delay(5);
 }
