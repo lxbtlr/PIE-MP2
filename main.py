@@ -58,12 +58,13 @@ def trigfunc(d):
     x = []
     y = []
     z = []
-    r = 0.0
         # .00003196*((int(d[i][2])**2)-0.3472*((int(d[i][2]))+115.4
 
     for i in range(len(d)):
         
-        r = .0003196*(float(d[i][2])**2)-0.3472*(float(d[i][2]))+115.4
+        # r = 1/(float(d[i][2])*0.0000322453+0.000824822)-171.72
+        r = 1/(float(d[i][2])*0.0000704684+0.000486971)-6.14906
+        
         x.append(r*math.sin(math.radians(110-float(d[i][1])))*math.cos(math.radians(float(d[i][0]))))
         y.append(r*math.sin(math.radians(110-float(d[i][1])))*math.sin(math.radians(float(d[i][0]))))
         z.append(r*math.cos(math.radians(110-float(d[i][1])))+9)

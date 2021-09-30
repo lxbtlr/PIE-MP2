@@ -4,17 +4,17 @@ int analogPin = A1;
 int value = 0;
 int pan_min = 0;
 int pan_max = 40;
-int tilt_min = 11;
-int tilt_max = 40;
+int tilt_min = 13;
+int tilt_max = 45;
 int pan;
 int tilt;
-int tbs = 25;
+int tbs = 30;
 
 int panPin = 9;
 int tiltPin = 10;
 Servo pan_servo;
 Servo tilt_servo;
-
+float temp = 0;
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
@@ -51,18 +51,18 @@ void loop() {
   delay(6000);
 }
 
+
 void scan(int p, int t) {
+  temp = 0;
   // put your main code here, to run repeatedly:
-  samples[0] = analogRead(analogPin);
-  value = samples[0];
-  samples[1] = analogRead(analogPin);
-  samples[2] = analogRead(analogPin);
-  value = min(samples[0],samples[1]);
-  value = min(value, samples[2]);
+  for(int i = 0; i <20; i++){
+    temp += analogRead(analogPin);
+    temp = temp/2;
+    }
   Serial.print(p);
   Serial.print(",");
   Serial.print(t);
   Serial.print(",");
-  Serial.print(value);
+  Serial.print(temp);
   Serial.print("L");
 }
