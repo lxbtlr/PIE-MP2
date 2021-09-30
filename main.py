@@ -9,20 +9,11 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns 
 sns.set_theme()
-# Send commands to the arduino over serial, records the data, then maps the scan
-# PanRng = input("Pan Range of the Scanner\n\t")
-# TltRng = input("Tilt range of the Scanner\n\t")
 
-ser = serial.Serial("COM14",9600) #change the port to 'COM6' if windows
+ser = serial.Serial("/dev/cu.usbmodem14101",9600) #change the port to 'COM6' if windows, or other appropriate port
 
 endkey = re.compile(r'DONE')
 endline = re.compile(r'L')
-
-def sendData(d):
-    # sending whatever data we want to the arduino
-    ser.write((d+"\r\n").encode())
-
-
     
 def receive_data():
     # receiving data over serial from the arduino,
@@ -32,7 +23,6 @@ def receive_data():
     while True:
         bytesToRead = ser.inWaiting()
         inny = ser.readline(bytesToRead).decode('utf-8')
-        
         
         line += inny
         if endkey.search(line):
@@ -71,42 +61,37 @@ def trigfunc(d):
         print(r)
     return x,y,z
 
-
-
-print("Sending ranges")
-
-# sendData(PanRng)
-# sendData(TltRng)
 print("Scanning...")
 allData = []
 ex = True
 while ex:
-
     values, ex = receive_data()
     if ex == False:
         continue
     allData.append(values.split(","))
+
+
 print("Scan Complete")
+
 ser.close()
+
 print(allData)
+
 print("Saving all data...")
+
 write_data(allData)
+
 x,y,z = trigfunc(allData)
 print("Plotting...")
-# write_data("\n")
-# write_data((x,y,z))
-# df = pd.DataFrame({"X": x,"Y":y,"Z":z})
-# df = df.pivot(index="X", columns = "Y", values = "Z")
-# ax = sns.heatmap(df)
-# plt.show()
+
 magnitude = []
 for i in range(len(x)):
-    magnitude.append((x[i]**2*y[i]**2*z[i]**2)**(1/2))
+    magnitude.append((x[i]**2+y[i]**2+z[i]**2)**(1/2))
 
 fig = plt.figure()
 ax = plt.axes(projection='3d')
 
-ax.scatter3D(x, y, z, c=magnitude, cmap='rainbow')
+ax.scatter3D(x, y, z, c=magnitude, cmap='rainbow', s=10)
 ax.set_ylabel("Y")
 ax.set_xlabel("X")
 ax.set_zlabel("Z")
